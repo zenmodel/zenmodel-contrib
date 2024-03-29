@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/zenmodel/zenmodel-contrib/tools"
+
 	"github.com/sashabaranov/go-openai"
 	"github.com/zenmodel/zenmodel"
 	"go.uber.org/zap"
 )
 
-func NewProcessor() zenmodel.Processor {
+func NewProcessor() *OpenAIChatProcessor {
 	processor := &OpenAIChatProcessor{
 		memoryKeyMessages: "messages",
 		requestConfig: RequestConfig{
@@ -109,7 +111,7 @@ func (p *OpenAIChatProcessor) Process(brain zenmodel.BrainRuntime) error {
 	p.logger.Debug("LLM respond", zap.Any("response", msg))
 
 	messages = append(messages, msg)
-	if err = brain.SetMemory("messages", messages); err != nil {
+	if err = brain.SetMemory(p.memoryKeyMessages, messages); err != nil {
 		return fmt.Errorf("set memory error: %v", err)
 	}
 
@@ -148,5 +150,21 @@ func (p *OpenAIChatProcessor) WithClientConfig(clientConfig openai.ClientConfig)
 
 func (p *OpenAIChatProcessor) WithClient(client *openai.Client) zenmodel.Processor {
 	p.client = client
+	return p
+}
+func (p *OpenAIChatProcessor) WithToolCallDefinitions(toolCallDefinitions []tools.ToolCallDefinition) zenmodel.Processor {
+	toos := make([]openai.Tool, 0)
+	for _, toolCallDefinition := range toolCallDefinitions {
+		toos = append(toos, openai.Tool{
+			Type: openai.ToolType(toolCallDefinition.Type),
+			Function: &openai.FunctionDefinition{
+				Name:        toolCallDefinition.Function.Name,
+				Description: toolCallDefinition.Function.Description,
+				Parameters:  toolCallDefinition.Function.Parameters,
+			},
+		})
+		p.requestConfig.Tools = toos
+	}
+
 	return p
 }
