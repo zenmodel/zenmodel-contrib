@@ -1,4 +1,4 @@
-module github.com/zenmodel/zenmodel-contrib/processor/openaichat
+module github.com/zenmodel/zenmodel-contrib/processor/calltools
 
 go 1.21.0
 
