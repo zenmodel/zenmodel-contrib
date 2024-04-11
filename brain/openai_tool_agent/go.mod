@@ -2,18 +2,13 @@ module github.com/zenmodel/zenmodel-contrib/brain/openai_tool_agent
 
 go 1.21.0
 
-replace (
-	github.com/zenmodel/zenmodel-contrib => ./../../
-	github.com/zenmodel/zenmodel-contrib/processor/calltools => ./../../processor/calltools
-	github.com/zenmodel/zenmodel-contrib/processor/openaichat => ./../../processor/openaichat
-)
-
 require (
 	github.com/sashabaranov/go-openai v1.20.4
-	github.com/zenmodel/zenmodel v0.0.0-20240328171455-5432f4553e23
-	github.com/zenmodel/zenmodel-contrib v0.0.0-00010101000000-000000000000
-	github.com/zenmodel/zenmodel-contrib/processor/calltools v0.0.0-00010101000000-000000000000
-	github.com/zenmodel/zenmodel-contrib/processor/openaichat v0.0.0-00010101000000-000000000000
+	github.com/zenmodel/zenmodel v0.0.0-20240409075244-5e5a3dcb3262
+	github.com/zenmodel/zenmodel-contrib v0.0.0-20240329141858-65998293e59f
+	github.com/zenmodel/zenmodel-contrib/processor/calltools v0.0.0-20240411093655-41afbe28723d
+	github.com/zenmodel/zenmodel-contrib/processor/openaichat v0.0.0-20240411093655-41afbe28723d
+
 )
 
 require (
@@ -24,7 +19,6 @@ require (
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/serpapi/google-search-results-golang v0.0.0-20240325113416-ec93f510648e // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
