@@ -1,4 +1,4 @@
-package openai_agent_with_tools
+package openai_tool_agent
 
 import (
 	"github.com/sashabaranov/go-openai"

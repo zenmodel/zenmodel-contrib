@@ -11,13 +11,13 @@ import (
 	"testing"
 
 	"github.com/sashabaranov/go-openai"
-	"github.com/zenmodel/zenmodel-contrib/brain/openai_agent_with_tools"
+	"github.com/zenmodel/zenmodel-contrib/brain/openai_tool_agent"
 	"github.com/zenmodel/zenmodel-contrib/tools"
 )
 
 func main() {
     // clone community shared brainprint, and set some tool cal definitions(support multi definitions)
-	bp := openai_agent_with_tools.CloneBrainprint(tools.OpenWeatherToolCallDefinition())
+	bp := openai_tool_agent.CloneBrainprint(tools.OpenWeatherToolCallDefinition())
 	// build brain
 	brain := bp.Build()
 	// set memory and trig all entry links

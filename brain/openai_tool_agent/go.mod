@@ -1,4 +1,4 @@
-module github.com/zenmodel/zenmodel-contrib/brain/openai_agent_with_tools
+module github.com/zenmodel/zenmodel-contrib/brain/openai_tool_agent
 
 go 1.21.0
 
