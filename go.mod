@@ -1,11 +1,11 @@
 module github.com/zenmodel/zenmodel-contrib
 
-go 1.21.0
+go 1.19
 
 require (
-	github.com/sashabaranov/go-openai v1.20.5
+	github.com/sashabaranov/go-openai v1.21.0
 	github.com/serpapi/google-search-results-golang v0.0.0-20240325113416-ec93f510648e
-	github.com/zenmodel/zenmodel v0.0.0-20240409075244-5e5a3dcb3262
+	github.com/zenmodel/zenmodel v0.0.0-20240413180257-b1af54a7ca0f
 	go.uber.org/zap v1.27.0
 )
 
@@ -20,8 +20,8 @@ require (
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
-	k8s.io/apimachinery v0.29.2 // indirect
-	k8s.io/client-go v0.29.2 // indirect
+	k8s.io/apimachinery v0.29.3 // indirect
+	k8s.io/client-go v0.29.3 // indirect
 	k8s.io/klog/v2 v2.110.1 // indirect
 	k8s.io/utils v0.0.0-20230726121419-3b25d923346b // indirect
 )
