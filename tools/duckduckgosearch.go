@@ -135,10 +135,13 @@ func ddgSearch(args string) (resp string, err error) {
 	}
 	search := g.NewGoogleSearch(parameter, apiKey)
 	results, err := search.GetJSON()
+
+	cutResults := results["organic_results"].([]interface{})
+	cutResults = cutResults[:10]
 	if err != nil {
 		return "", err
 	}
-	res, err := json.Marshal(results)
+	res, err := json.Marshal(cutResults)
 	if err != nil {
 		return "", err
 	}

@@ -3,34 +3,58 @@ package openai_tool_agent
 import (
 	"github.com/sashabaranov/go-openai"
 	"github.com/zenmodel/zenmodel"
-	"github.com/zenmodel/zenmodel-contrib/processor/calltools"
-	"github.com/zenmodel/zenmodel-contrib/processor/openaichat"
-	"github.com/zenmodel/zenmodel-contrib/tools"
 )
 
-func CloneBrainprint(toolCallDefines ...tools.ToolCallDefinition) *zenmodel.Brainprint {
+func CloneBrainprint(config Config) (*zenmodel.Brainprint, error) {
 	bp := zenmodel.NewBrainPrint()
+
+	chatProcessor, err := config.newChatProcessor()
+	if err != nil {
+		return nil, err
+	}
+	callToolsProcessor, err := config.newCallToolsProcessor()
+	if err != nil {
+		return nil, err
+	}
+
 	// add neuron
-	bp.AddNeuronWithProcessor("llm", openaichat.NewProcessor().WithToolCallDefinitions(toolCallDefines))
-	bp.AddNeuronWithProcessor("action", calltools.NewProcessor().WithToolCallDefinitions(toolCallDefines))
+	bp.AddNeuronWithProcessor("llm", chatProcessor)
+	bp.AddNeuronWithProcessor("action", callToolsProcessor)
 
 	// add entry link
-	_, _ = bp.AddEntryLink("llm")
-
+	_, err = bp.AddEntryLink("llm")
+	if err != nil {
+		return nil, err
+	}
 	// add link
-	continueLink, _ := bp.AddLink("llm", "action")
-	_, _ = bp.AddLink("action", "llm")
+	continueLink, err := bp.AddLink("llm", "action")
+	if err != nil {
+		return nil, err
+	}
+	_, err = bp.AddLink("action", "llm")
+	if err != nil {
+		return nil, err
+	}
 
 	// add end link
-	endLink, _ := bp.AddEndLink("llm")
+	endLink, err := bp.AddEndLink("llm")
+	if err != nil {
+		return nil, err
+	}
 
 	// add link to cast group of a neuron
-	_ = bp.AddLinkToCastGroup("llm", "continue", continueLink)
-	_ = bp.AddLinkToCastGroup("llm", "end", endLink)
+	if err = bp.AddLinkToCastGroup("llm", "continue", continueLink); err != nil {
+		return nil, err
+	}
+	if err = bp.AddLinkToCastGroup("llm", "end", endLink); err != nil {
+		return nil, err
+	}
 	// bind cast group select function for neuron
-	_ = bp.BindCastGroupSelectFunc("llm", llmNext)
+	if err = bp.BindCastGroupSelectFunc("llm", llmNext); err != nil {
+		return nil, err
+	}
 
-	return bp
+	return bp, nil
 }
 
 func llmNext(b zenmodel.BrainRuntime) string {
