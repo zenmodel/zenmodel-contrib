@@ -202,34 +202,34 @@ func (p *OpenAIStructuredOutputProcessor) chatCompletion(ctx context.Context) er
 	if p.client == nil {
 		p.client = openai.NewClientWithConfig(p.clientConfig)
 	}
-	resp, err := p.client.CreateChatCompletion(ctx,
-		openai.ChatCompletionRequest{
-			Model:            p.requestConfig.Model,
-			MaxTokens:        p.requestConfig.MaxTokens,
-			Temperature:      p.requestConfig.Temperature,
-			TopP:             p.requestConfig.TopP,
-			N:                p.requestConfig.N,
-			Stream:           p.requestConfig.Stream,
-			Stop:             p.requestConfig.Stop,
-			PresencePenalty:  p.requestConfig.PresencePenalty,
-			ResponseFormat:   p.requestConfig.ResponseFormat,
-			Seed:             p.requestConfig.Seed,
-			FrequencyPenalty: p.requestConfig.FrequencyPenalty,
-			LogitBias:        p.requestConfig.LogitBias,
-			LogProbs:         p.requestConfig.LogProbs,
-			TopLogProbs:      p.requestConfig.TopLogProbs,
-			User:             p.requestConfig.User,
-			Tools:            p.requestConfig.Tools,
-			ToolChoice:       p.requestConfig.ToolChoice,
+	ccr := openai.ChatCompletionRequest{
+		Model:            p.requestConfig.Model,
+		MaxTokens:        p.requestConfig.MaxTokens,
+		Temperature:      p.requestConfig.Temperature,
+		TopP:             p.requestConfig.TopP,
+		N:                p.requestConfig.N,
+		Stream:           p.requestConfig.Stream,
+		Stop:             p.requestConfig.Stop,
+		PresencePenalty:  p.requestConfig.PresencePenalty,
+		ResponseFormat:   p.requestConfig.ResponseFormat,
+		Seed:             p.requestConfig.Seed,
+		FrequencyPenalty: p.requestConfig.FrequencyPenalty,
+		LogitBias:        p.requestConfig.LogitBias,
+		LogProbs:         p.requestConfig.LogProbs,
+		TopLogProbs:      p.requestConfig.TopLogProbs,
+		User:             p.requestConfig.User,
+		Tools:            p.requestConfig.Tools,
+		ToolChoice:       p.requestConfig.ToolChoice,
 
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: p.prompt,
-				},
+		Messages: []openai.ChatCompletionMessage{
+			{
+				Role:    openai.ChatMessageRoleUser,
+				Content: p.prompt,
 			},
 		},
-	)
+	}
+	p.logger.Debug("Call OpenAI CreateChatCompletion", zap.Any("ChatCompletionRequest", ccr))
+	resp, err := p.client.CreateChatCompletion(ctx, ccr)
 	if err != nil || len(resp.Choices) != 1 {
 		return fmt.Errorf("Completion error: err:%v len(choices):%v\n", err,
 			len(resp.Choices))

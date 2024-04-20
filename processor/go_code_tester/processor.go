@@ -15,15 +15,17 @@ import (
 )
 
 const (
-	workspacePath      = "./.zenmodel/processor/go-code-tester"
-	defaultGoBin       = "go"
-	goModName          = "gocodetester"
-	memKeyGoCodes      = "go_codes"
+	workspacePath = "./.zenmodel/processor/go-code-tester"
+	defaultGoBin  = "go"
+	goModName     = "gocodetester"
+
 	memKeyGoTestResult = "go_test_result"
 )
 
 var (
 	defaultTestFlag = []string{"-v", "-run"}
+
+	memKeyCodes = (&Codes{}).FunctionName()
 )
 
 func NewProcessor() *GoCodeTestProcessor {
@@ -43,11 +45,6 @@ type GoCodeTestProcessor struct { // nolint
 	keepTestCode bool
 
 	logger *zap.Logger
-}
-
-type GoCode struct {
-	Path string
-	Code string
 }
 
 func (p *GoCodeTestProcessor) WithLogger(logger *zap.Logger) *GoCodeTestProcessor {
@@ -74,14 +71,16 @@ func (p *GoCodeTestProcessor) WithTestCodeKeep(keep bool) *GoCodeTestProcessor {
 }
 
 func (p *GoCodeTestProcessor) Process(brain zenmodel.BrainRuntime) error {
-	codes, ok := brain.GetMemory(memKeyGoCodes).([]GoCode)
+	p.logger.Info("go code test processor start processing")
+
+	codes, ok := brain.GetMemory(memKeyCodes).(*Codes)
 	if !ok {
-		return fmt.Errorf("invalid memory type of key %s", memKeyGoCodes)
+		return fmt.Errorf("invalid memory type of key %s", memKeyCodes)
 	}
 	if err := cleanWorkspace(); err != nil {
 		return err
 	}
-	if err := createGoFiles(codes); err != nil {
+	if err := createCodeFiles(codes); err != nil {
 		return err
 	}
 	defer func() {
@@ -146,9 +145,12 @@ func cleanWorkspace() error {
 	return nil
 }
 
-func createGoFiles(goCodes []GoCode) error {
-	for _, goCode := range goCodes {
-		completePath := filepath.Join(workspacePath, goCode.Path)
+func createCodeFiles(codes *Codes) error {
+	for _, codeFile := range codes.CodeFiles {
+		if codeFile.Language != "go" {
+			continue
+		}
+		completePath := filepath.Join(workspacePath, codeFile.Path)
 		dirPath := filepath.Dir(completePath)
 
 		err := os.MkdirAll(dirPath, os.ModePerm)
@@ -156,7 +158,7 @@ func createGoFiles(goCodes []GoCode) error {
 			return err
 		}
 
-		err = ioutil.WriteFile(completePath, []byte(goCode.Code), 0644)
+		err = ioutil.WriteFile(completePath, []byte(codeFile.Content), 0644)
 		if err != nil {
 			return err
 		}
